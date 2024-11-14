@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"cloud.google.com/go/firestore"
+	"ex.com/basicws/internal/constants"
 	"ex.com/basicws/internal/service"
 )
 
@@ -22,6 +23,6 @@ func main() {
 
 	router := initRouter(db, &vertexAIService)
 
-	fmt.Printf("Listening to port %s", PORT)
-	http.ListenAndServe(PORT, router)
+	fmt.Printf("Listening to port %s", constants.PORT)
+	http.ListenAndServe(constants.PORT, router)
 }

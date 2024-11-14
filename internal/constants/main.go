@@ -1,5 +1,20 @@
 package constants
 
-const PROJECT_ID = "tough-buffalo"
-const LOCATION = "us-central1"
-const MODEL_NAME = "gemini-1.5-flash-001"
+import (
+	"fmt"
+	"os"
+)
+
+var PROJECT_ID = getEnvOrPanic("PROJECT_ID")
+var LOCATION = getEnvOrPanic("LOCATION")
+var MODEL_NAME = getEnvOrPanic("MODEL_NAME")
+var FIRESTORE_DB_ID = getEnvOrPanic("FIRESTORE_DB_ID")
+var PORT = getEnvOrPanic("PORT")
+
+func getEnvOrPanic(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		panic(fmt.Sprintf("environment variable %v is not defined", key))
+	}
+	return val
+}

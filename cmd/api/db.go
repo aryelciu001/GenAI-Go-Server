@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
+	"ex.com/basicws/internal/constants"
 )
 
 func initDb() *firestore.Client {
 	dbClient, err := firestore.NewClientWithDatabase(
-		context.Background(), PROJECT_ID, FIRESTORE_DB_ID,
+		context.Background(), constants.PROJECT_ID, constants.FIRESTORE_DB_ID,
 	)
 	if err != nil {
 		panic(err.Error())

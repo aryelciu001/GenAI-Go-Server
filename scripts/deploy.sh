@@ -1,11 +1,7 @@
 #!/bin/bash
-# Go to root dir
 cd $(dirname $0)/..
 
-# Variables
-export PROJECT_ID=tough-buffalo
-export PROJECT_NAME=golang-webserver
-export LOCATION=us-central1
+. scripts/init.sh
 
 export CLOUDRUN_SERVICE_NAME=$PROJECT_NAME-backend
 export CLOUDRUN_SERVICE_IMAGE_NAME=gcr.io/$PROJECT_ID/$CLOUDRUN_SERVICE_NAME
