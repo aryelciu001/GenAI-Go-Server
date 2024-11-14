@@ -23,6 +23,6 @@ func main() {
 
 	router := initRouter(db, &vertexAIService)
 
-	fmt.Printf("Listening to port %s", constants.PORT)
-	http.ListenAndServe(constants.PORT, router)
+	fmt.Printf("Listening to port %s", constants.SERVER_PORT)
+	http.ListenAndServe(constants.SERVER_PORT, router)
 }

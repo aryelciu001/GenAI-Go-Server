@@ -4,4 +4,4 @@ export PROJECT_NAME=
 export LOCATION=
 export MODEL_NAME=
 export FIRESTORE_DB_ID=
-export PORT=
+export SERVER_PORT=

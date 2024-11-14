@@ -21,4 +21,10 @@ gcloud run deploy $CLOUDRUN_SERVICE_NAME \
     --image $CLOUDRUN_SERVICE_IMAGE_NAME \
     --region $LOCATION \
     --port 3000 --allow-unauthenticated \
-    --min-instances 1
+    --min-instances 1 \
+    --set-env-vars=PROJECT_ID=$PROJECT_ID \
+    --set-env-vars=PROJECT_NAME=$PROJECT_NAME \
+    --set-env-vars=LOCATION=$LOCATION \
+    --set-env-vars=MODEL_NAME=$MODEL_NAME \
+    --set-env-vars=FIRESTORE_DB_ID=$FIRESTORE_DB_ID \
+    --set-env-vars=SERVER_PORT=$SERVER_PORT
