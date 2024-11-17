@@ -10,6 +10,7 @@ var LOCATION = getEnvOrPanic("LOCATION")
 var MODEL_NAME = getEnvOrPanic("MODEL_NAME")
 var FIRESTORE_DB_ID = getEnvOrPanic("FIRESTORE_DB_ID")
 var SERVER_PORT = getEnvOrPanic("SERVER_PORT")
+var BUCKET_NAME = getEnvOrPanic("BUCKET_NAME")
 
 func getEnvOrPanic(key string) string {
 	val := os.Getenv(key)

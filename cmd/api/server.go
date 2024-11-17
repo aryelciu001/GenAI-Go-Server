@@ -7,10 +7,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func initRouter(db *firestore.Client, vertexAIService *service.VertexAIService) *chi.Mux {
+func initRouter(db *firestore.Client, vertexAIService *service.VertexAIService, cloudStorageService *service.CloudStorageService) *chi.Mux {
 	_app := app{
-		Db:              db,
-		VertexAIService: vertexAIService,
+		Db:                  db,
+		VertexAIService:     vertexAIService,
+		CloudStorageService: cloudStorageService,
 	}
 
 	router := chi.NewRouter()
@@ -20,6 +21,7 @@ func initRouter(db *firestore.Client, vertexAIService *service.VertexAIService) 
 	router.Get("/v1/health", _app.GetHealthHandler)
 	router.Post("/v1/items", _app.PostItemHandler)
 	router.Get("/v1/items/{id}", _app.GetItemHandler)
+	router.Post("/v1/file:upload", _app.UploadFileHandler)
 
 	return router
 }

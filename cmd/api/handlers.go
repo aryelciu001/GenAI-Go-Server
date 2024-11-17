@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"ex.com/basicws/internal/constants"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -84,4 +85,27 @@ func (app *app) GetItemHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(encodedData)
+}
+
+func (app *app) UploadFileHandler(w http.ResponseWriter, r *http.Request) {
+	parsingError := r.ParseMultipartForm(10 * 1000000)
+	if parsingError != nil {
+		http.Error(w, fmt.Sprintf("failed parsing body: %v", parsingError.Error()), http.StatusBadRequest)
+		return
+	}
+
+	file, fileHandler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed parsing body: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+	err = app.CloudStorageService.UploadToBucket(ctx, constants.BUCKET_NAME, file, fileHandler.Filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte("OK"))
 }
