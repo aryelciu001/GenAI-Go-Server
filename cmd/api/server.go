@@ -7,11 +7,12 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func initRouter(db *firestore.Client, vertexAIService *service.VertexAIService, cloudStorageService *service.CloudStorageService) *chi.Mux {
+func initRouter(db *firestore.Client, vertexAIService *service.VertexAIService, cloudStorageService *service.CloudStorageService, redisService *service.RedisService) *chi.Mux {
 	_app := app{
 		Db:                  db,
 		VertexAIService:     vertexAIService,
 		CloudStorageService: cloudStorageService,
+		RedisService:        redisService,
 	}
 
 	router := chi.NewRouter()

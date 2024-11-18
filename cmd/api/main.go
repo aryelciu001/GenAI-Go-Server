@@ -13,6 +13,7 @@ type app struct {
 	Db                  *firestore.Client
 	VertexAIService     *service.VertexAIService
 	CloudStorageService *service.CloudStorageService
+	RedisService        *service.RedisService
 }
 
 func main() {
@@ -25,7 +26,10 @@ func main() {
 	cloudStorageService := service.InitCloudStorageClient()
 	defer cloudStorageService.Client.Close()
 
-	router := initRouter(db, vertexAIService, cloudStorageService)
+	redisService := service.InitRedisService()
+	defer redisService.Client.Close()
+
+	router := initRouter(db, vertexAIService, cloudStorageService, redisService)
 
 	fmt.Printf("Listening to port %s", constants.SERVER_PORT)
 	http.ListenAndServe(constants.SERVER_PORT, router)

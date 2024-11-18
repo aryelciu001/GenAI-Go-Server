@@ -35,7 +35,7 @@ func (app *app) PostItemHandler(w http.ResponseWriter, r *http.Request) {
 	parsingError := json.NewDecoder(r.Body).Decode(&reqBody)
 
 	if parsingError != nil {
-		http.Error(w, fmt.Sprintf("Payload parsing error: %s", parsingError.Error()), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("payload parsing error: %s", parsingError.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -69,19 +69,27 @@ func (app *app) GetItemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snapshot, err := app.Db.Collection("poki").Doc(id).Get(ctx)
+	var encodedData []byte
+	encodedDataInString, err := app.RedisService.Get(ctx, id)
+	encodedData = []byte(encodedDataInString)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+		snapshot, err := app.Db.Collection("poki").Doc(id).Get(ctx)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("error retrieving: %v", err.Error()), http.StatusInternalServerError)
+			return
+		}
 
-	data := snapshot.Data()
-	encodedData, err := json.Marshal(data)
+		data := snapshot.Data()
+		encodedData, err = json.Marshal(data)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("error encoding data: %v\n", err.Error()), http.StatusInternalServerError)
+		}
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		_, err = app.RedisService.Add(ctx, id, encodedData)
+		if err != nil {
+			fmt.Printf("error saving to cache: %v\n", err.Error())
+		}
 	}
 
 	w.Write(encodedData)
