@@ -39,7 +39,7 @@ func (app *app) PostItemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	docRef, _, err := app.Db.Collection("poki").Add(ctx, reqBody)
+	docRef, _, err := app.DbService.Client.Collection("poki").Add(ctx, reqBody)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -74,7 +74,7 @@ func (app *app) GetItemHandler(w http.ResponseWriter, r *http.Request) {
 	encodedData = []byte(encodedDataInString)
 
 	if err != nil {
-		snapshot, err := app.Db.Collection("poki").Doc(id).Get(ctx)
+		snapshot, err := app.DbService.Client.Collection("poki").Doc(id).Get(ctx)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("error retrieving: %v", err.Error()), http.StatusInternalServerError)
 			return

@@ -4,32 +4,31 @@ import (
 	"fmt"
 	"net/http"
 
-	"cloud.google.com/go/firestore"
 	"ex.com/basicws/internal/constants"
 	"ex.com/basicws/internal/service"
 )
 
 type app struct {
-	Db                  *firestore.Client
+	DbService           *service.DbService
 	VertexAIService     *service.VertexAIService
 	CloudStorageService *service.CloudStorageService
 	RedisService        *service.RedisService
 }
 
 func main() {
-	db := initDb()
-	defer db.Close()
+	dbService := service.MustInitDb()
+	defer dbService.Client.Close()
 
-	vertexAIService := service.InitializeVertexAIService()
+	vertexAIService := service.MustInitializeVertexAIService()
 	defer vertexAIService.GenAIClient.Close()
 
-	cloudStorageService := service.InitCloudStorageClient()
+	cloudStorageService := service.MustInitCloudStorageClient()
 	defer cloudStorageService.Client.Close()
 
 	redisService := service.InitRedisService()
 	defer redisService.Client.Close()
 
-	router := initRouter(db, vertexAIService, cloudStorageService, redisService)
+	router := initRouter(dbService, vertexAIService, cloudStorageService, redisService)
 
 	fmt.Printf("Listening to port %s", constants.SERVER_PORT)
 	http.ListenAndServe(constants.SERVER_PORT, router)

@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"context"
@@ -7,12 +7,18 @@ import (
 	"ex.com/basicws/internal/constants"
 )
 
-func initDb() *firestore.Client {
+type DbService struct {
+	Client *firestore.Client
+}
+
+func MustInitDb() *DbService {
 	dbClient, err := firestore.NewClientWithDatabase(
 		context.Background(), constants.PROJECT_ID, constants.FIRESTORE_DB_ID,
 	)
 	if err != nil {
 		panic(err.Error())
 	}
-	return dbClient
+	return &DbService{
+		Client: dbClient,
+	}
 }

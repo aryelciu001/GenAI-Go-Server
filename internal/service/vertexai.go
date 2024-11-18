@@ -14,7 +14,7 @@ type VertexAIService struct {
 	GenAIClient *genai.Client
 }
 
-func InitializeVertexAIService() *VertexAIService {
+func MustInitializeVertexAIService() *VertexAIService {
 	client, err := genai.NewClient(context.Background(), constants.PROJECT_ID, constants.LOCATION)
 	if err != nil {
 		panic("failed to initialize Vertex AI client")

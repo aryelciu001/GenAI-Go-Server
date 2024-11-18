@@ -1,15 +1,14 @@
 package main
 
 import (
-	"cloud.google.com/go/firestore"
 	"ex.com/basicws/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func initRouter(db *firestore.Client, vertexAIService *service.VertexAIService, cloudStorageService *service.CloudStorageService, redisService *service.RedisService) *chi.Mux {
+func initRouter(dbService *service.DbService, vertexAIService *service.VertexAIService, cloudStorageService *service.CloudStorageService, redisService *service.RedisService) *chi.Mux {
 	_app := app{
-		Db:                  db,
+		DbService:           dbService,
 		VertexAIService:     vertexAIService,
 		CloudStorageService: cloudStorageService,
 		RedisService:        redisService,

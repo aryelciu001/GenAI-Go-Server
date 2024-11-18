@@ -13,7 +13,7 @@ type CloudStorageService struct {
 	Client *storage.Client
 }
 
-func InitCloudStorageClient() *CloudStorageService {
+func MustInitCloudStorageClient() *CloudStorageService {
 	client, err := storage.NewClient(context.Background())
 
 	if err != nil {
