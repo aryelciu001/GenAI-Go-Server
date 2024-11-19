@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"sync"
 
 	"cloud.google.com/go/vertexai/genai"
 
@@ -24,11 +26,15 @@ func MustInitializeVertexAIService() *VertexAIService {
 	}
 }
 
-func (s *VertexAIService) GenerateText(ctx context.Context) (string, error) {
-	geminiClient := s.GenAIClient.GenerativeModel(constants.MODEL_NAME)
-	prompt := genai.Text("Generate random poem minimum of 1000 words")
+func (s *VertexAIService) GenerateText(ctx context.Context, prompt string) (string, error) {
+	go func() {
+		log.Println("Gemini Call")
+	}()
 
-	resp, err := geminiClient.GenerateContent(ctx, prompt)
+	geminiClient := s.GenAIClient.GenerativeModel(constants.MODEL_NAME)
+	_prompt := genai.Text(prompt)
+
+	resp, err := geminiClient.GenerateContent(ctx, _prompt)
 	if err != nil {
 		return "", err
 	}
@@ -38,4 +44,40 @@ func (s *VertexAIService) GenerateText(ctx context.Context) (string, error) {
 	}
 
 	return fmt.Sprintf("%v", resp.Candidates[0].Content.Parts[0]), nil
+}
+
+func (s *VertexAIService) PickOneRandomPoem(ctx context.Context) (string, error) {
+	wg := sync.WaitGroup{}
+	chanSize := 2
+	resChan := make(chan string, chanSize)
+
+	for i := 0; i < chanSize; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			res, err := s.GenerateText(ctx, "Generate a poem with less than 20 words")
+
+			if err != nil {
+				resChan <- ""
+			} else {
+				resChan <- res
+			}
+		}()
+	}
+
+	close(resChan)
+	wg.Wait()
+
+	var generatedPoems string
+	count := 1
+	for res := range resChan {
+		generatedPoems = generatedPoems + fmt.Sprintf("Poem %d: %v\n", count, res)
+	}
+
+	prompt := fmt.Sprintf(
+		`Given a list of prompt: %v
+		Pick one poem that is the best.`, generatedPoems)
+
+	res, err := s.GenerateText(ctx, prompt)
+	return res, err
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func (app *app) GetHealthHandler(w http.ResponseWriter, r *http.Request) {
-	res, err := app.VertexAIService.GenerateText(r.Context())
+	res, err := app.VertexAIService.PickOneRandomPoem(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
