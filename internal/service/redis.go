@@ -37,3 +37,7 @@ func (s *RedisService) Get(ctx context.Context, key string) (string, error) {
 	}
 	return res, nil
 }
+
+func (s *RedisService) Test() string {
+	return "foodbar"
+}

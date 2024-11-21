@@ -1,2 +1,4 @@
 /build
 /**/init.sh
+/bin
+.env*
