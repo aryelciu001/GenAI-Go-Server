@@ -1,4 +1,5 @@
 /build
 /**/init.sh
 /bin
-.env*
+.env
+.env.test
