@@ -9,20 +9,22 @@ import (
 
 	"cloud.google.com/go/vertexai/genai"
 
-	"ex.com/basicws/internal/constants"
+	"ex.com/basicws/internal/config"
 )
 
 type VertexAIService struct {
 	GenAIClient *genai.Client
+	ModelName   string
 }
 
-func MustInitializeVertexAIService() *VertexAIService {
-	client, err := genai.NewClient(context.Background(), constants.PROJECT_ID, constants.LOCATION)
+func MustInitializeVertexAIService(cfg *config.Config) *VertexAIService {
+	client, err := genai.NewClient(context.Background(), cfg.ProjectID, cfg.Location)
 	if err != nil {
 		panic("failed to initialize Vertex AI client")
 	}
 	return &VertexAIService{
 		GenAIClient: client,
+		ModelName:   cfg.ModelName,
 	}
 }
 
@@ -31,7 +33,7 @@ func (s *VertexAIService) GenerateText(ctx context.Context, prompt string) (stri
 		log.Println("Gemini Call")
 	}()
 
-	geminiClient := s.GenAIClient.GenerativeModel(constants.MODEL_NAME)
+	geminiClient := s.GenAIClient.GenerativeModel(s.ModelName)
 	_prompt := genai.Text(prompt)
 
 	resp, err := geminiClient.GenerateContent(ctx, _prompt)
@@ -65,8 +67,8 @@ func (s *VertexAIService) PickOneRandomPoem(ctx context.Context) (string, error)
 		}()
 	}
 
-	close(resChan)
 	wg.Wait()
+	close(resChan)
 
 	var generatedPoems string
 	count := 1

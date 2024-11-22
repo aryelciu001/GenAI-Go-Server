@@ -1,25 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
-	"ex.com/basicws/internal/constants"
+	"ex.com/basicws/internal/config"
 	"ex.com/basicws/internal/service"
 )
 
-type app struct {
-	DbService           *service.DbService
-	VertexAIService     *service.VertexAIService
-	CloudStorageService *service.CloudStorageService
-	RedisService        *service.RedisService
-}
-
 func main() {
-	dbService := service.MustInitDb()
+	cfg := config.LoadConfig()
+
+	dbService := service.MustInitDb(cfg)
 	defer dbService.Client.Close()
 
-	vertexAIService := service.MustInitializeVertexAIService()
+	vertexAIService := service.MustInitializeVertexAIService(cfg)
 	defer vertexAIService.GenAIClient.Close()
 
 	cloudStorageService := service.MustInitCloudStorageClient()
@@ -28,8 +23,8 @@ func main() {
 	redisService := service.InitRedisService()
 	defer redisService.Client.Close()
 
-	router := initRouter(dbService, vertexAIService, cloudStorageService, redisService)
+	router := initRouter(cfg, dbService, vertexAIService, cloudStorageService, redisService)
 
-	fmt.Printf("Listening to port %s", constants.SERVER_PORT)
-	http.ListenAndServe(constants.SERVER_PORT, router)
+	log.Printf("Listening to port %s", cfg.ServerPort)
+	http.ListenAndServe(cfg.ServerPort, router)
 }

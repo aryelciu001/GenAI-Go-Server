@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
-	"ex.com/basicws/internal/constants"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -88,7 +88,7 @@ func (app *app) GetItemHandler(w http.ResponseWriter, r *http.Request) {
 
 		_, err = app.RedisService.Add(ctx, id, encodedData)
 		if err != nil {
-			fmt.Printf("error saving to cache: %v\n", err.Error())
+			log.Printf("error saving to cache: %v\n", err.Error())
 		}
 	}
 
@@ -109,7 +109,7 @@ func (app *app) UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	err = app.CloudStorageService.UploadToBucket(ctx, constants.BUCKET_NAME, file, fileHandler.Filename)
+	err = app.CloudStorageService.UploadToBucket(ctx, app.Config.BucketName, file, fileHandler.Filename)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
